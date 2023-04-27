@@ -254,11 +254,11 @@ export default {
       if (this.reference != '') {
         formData.append("reference", this.reference);
       }
-      if(this.checkfilesize < 1024*1024){
-        this.images.forEach((image) => {
-          formData.append("myImage", image);
-        });
-      }
+      // if(this.checkfilesize < 1024*1024){
+        // this.images.forEach((image) => {
+        //   formData.append("myImage", image);
+        // });
+      // }
       formData.append("title", this.titleBlog);
       formData.append("content", this.contentBlog);
       formData.append("pinned", this.pinnedBlog ? 1 : 0);
@@ -266,9 +266,9 @@ export default {
       // formData.append("start_date", this.start_date);
       // formData.append("end_date", this.end_date);
       formData.append("status", this.statusBlog);
-      // this.images.forEach((image) => {
-      //   formData.append("myImage", image);
-      // });
+      this.images.forEach((image) => {
+        formData.append("myImage", image);
+      });
 
       // Note ***************
       // ตอนเรายิง Postmant จะใช้ fromData
