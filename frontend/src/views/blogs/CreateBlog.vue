@@ -235,7 +235,7 @@ export default {
       // }
     },
     showSelectImage(image) {
-      // for preview onlysdfd
+      // for preview onlysdfddfdf
       return URL.createObjectURL(image);
     },
     //s
