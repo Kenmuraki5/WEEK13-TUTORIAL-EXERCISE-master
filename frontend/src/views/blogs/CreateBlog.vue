@@ -165,15 +165,12 @@ import {
   alpha,
 } from "vuelidate/lib/validators";
 const checkstatus = (value, vm) => {
-  if (vm.end_date == ' ') {
-    return ture
-  }
   return !(value == "status_public" || value == "status_private")
 }
-const checkfile = (value) => {
+const checkfile = (value, _vm) => {
   return !(value > 1024* 1024)
 }
-const checkuploadfile = (value, vm) =>{
+const checkuploadfile = (value, _vm) =>{
   return !(value == 0)
 }
 function checkStart(value) {
