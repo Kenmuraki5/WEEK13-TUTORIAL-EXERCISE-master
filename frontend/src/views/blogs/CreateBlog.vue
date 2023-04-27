@@ -15,7 +15,7 @@
       </div>
     </section>
     <section class="px-6">
-      <input class="mb-5" multiple type="file" accept="image/png, image/jpeg, image/webp" @change="selectImages" />
+      <input class="mb-5" multiple type="file" accept="image/png, image/jpeg, image/webp" @change="selectImages"/>
 
       <div v-if="images" class="columns is-multiline">
         <div v-for="(image, index) in images" :key="image.id" class="column is-one-quarter">
@@ -32,6 +32,10 @@
         </div>
 
       </div>
+      <template v-if="$v.checkfilesize.$error">
+        <p class="help is-danger" v-if="!$v.checkfilesize.checkfile">file upload is not more than 1MB </p>
+        <p class="help is-danger" v-if="!$v.checkfilesize.checkuploadfile">please upload files </p>
+      </template>
 
       <div class="field mt-5">
         <label class="label">Title</label>
@@ -158,13 +162,19 @@ import {
   minLength,
   maxLength,
   url,
-  alpha
+  alpha,
 } from "vuelidate/lib/validators";
 const checkstatus = (value, vm) => {
   if (vm.end_date == ' ') {
     return ture
   }
   return !(value == "status_public" || value == "status_private")
+}
+const checkfile = (value) => {
+  return !(value > 1024* 1024)
+}
+const checkuploadfile = (value, vm) =>{
+  return !(value == 0)
 }
 function checkStart(value) {
 
@@ -207,7 +217,7 @@ export default {
       reference: "",
       start_date: '',
       end_date: '',
-      checkfilsize:0
+      checkfilesize:0
     };
   },
   methods: {
@@ -215,13 +225,14 @@ export default {
       this.checkfilsize = 0
       this.images = event.target.files
       this.images.forEach((val) => {
-        this.checkfilsize += val.size
+        this.checkfilesize += val.size
       })
-      if(this.checkfilsize > 1024*1024){
-        alert("image is not more than 1MB")
-        event.target.value = ''
-        this.images = []
-      }
+      this.$v.checkfilesize.$touch()
+      // if(this.checkfilsize > 1024*1024){
+      //   alert("image is not more than 1MB")
+      //   event.target.value = ''
+      //   this.images = []
+      // }
     },
     showSelectImage(image) {
       // for preview only
@@ -231,11 +242,12 @@ export default {
       console.log(this.images);
       this.images = Array.from(this.images);
       this.images.splice(index, 1);
-      this.checkfilsize -= image.size
+      this.checkfilesize -= image.size
+      this.$v.checkfilesize.$touch()
     },
     submitBlog() {
       this.$v.$touch();
-
+      this.$v.checkfilesize.$touch()
       const formData = new FormData();
       if (this.start_date != "" && this.end_date != "") {
         formData.append("start_date", this.start_date);
@@ -244,7 +256,7 @@ export default {
       if (this.reference != '') {
         formData.append("reference", this.reference);
       }
-      if(this.checkfilsize < 1024*1024){
+      if(this.checkfilesize < 1024*1024){
         this.images.forEach((image) => {
           formData.append("myImage", image);
         });
@@ -303,6 +315,10 @@ export default {
     },
     end_date: {
       checkEnd
+    },
+    checkfilesize:{
+      checkfile,
+      checkuploadfile
     }
   },
 };
