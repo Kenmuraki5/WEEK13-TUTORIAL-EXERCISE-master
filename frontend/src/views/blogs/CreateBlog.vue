@@ -207,7 +207,6 @@ export default {
       reference: "",
       start_date: '',
       end_date: '',
-      invalidimages:'',
       checkfilsize:0
     };
   },
