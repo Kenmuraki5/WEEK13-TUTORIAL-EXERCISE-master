@@ -238,6 +238,7 @@ export default {
       // for preview only
       return URL.createObjectURL(image);
     },
+    //s
     deleteSelectImage(index, image) {
       console.log(this.images);
       this.images = Array.from(this.images);
