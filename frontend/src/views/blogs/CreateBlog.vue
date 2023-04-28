@@ -15,7 +15,7 @@
       </div>
     </section>
     <section class="px-6">
-      <input class="mb-5" multiple type="file" accept="image/png, image/jpeg, image/webp" @change="selectImages"/>
+      <input class="mb-5" multiple type="file" accept="image/png, image/jpeg, image/webp" @change="selectImages" />
 
       <div v-if="images" class="columns is-multiline">
         <div v-for="(image, index) in images" :key="image.id" class="column is-one-quarter">
@@ -165,12 +165,13 @@ import {
   alpha,
 } from "vuelidate/lib/validators";
 const checkstatus = (value, vm) => {
-  return !(value == "status_public" || value == "status_private")
+  console.log(value)
+  return (value == "status_public" || value == "status_private")
 }
 const checkfile = (value, _vm) => {
-  return !(value > 1024* 1024)
+  return !(value > 1024 * 1024)
 }
-const checkuploadfile = (value, _vm) =>{
+const checkuploadfile = (value, _vm) => {
   return !(value == 0)
 }
 function checkStart(value) {
@@ -214,7 +215,7 @@ export default {
       reference: "",
       start_date: '',
       end_date: '',
-      checkfilesize:0
+      checkfilesize: 0
     };
   },
   methods: {
@@ -246,49 +247,52 @@ export default {
     submitBlog() {
       this.$v.$touch();
       this.$v.checkfilesize.$touch()
-      const formData = new FormData();
-      if (this.start_date != "" && this.end_date != "") {
-        formData.append("start_date", this.start_date);
-        formData.append("end_date", this.end_date);
-      }
-      if (this.reference != '') {
-        formData.append("reference", this.reference);
-      }
-      // if(this.checkfilesize < 1024*1024){
+      if (!this.$v.$invalid) {
+        const formData = new FormData();
+        if (this.start_date != "" && this.end_date != "") {
+          formData.append("start_date", this.start_date);
+          formData.append("end_date", this.end_date);
+        }
+        if (this.reference != '') {
+          formData.append("reference", this.reference);
+        }
+        // if(this.checkfilesize < 1024*1024){
         // this.images.forEach((image) => {
         //   formData.append("myImage", image);
         // });
-      // }
-      formData.append("title", this.titleBlog);
-      formData.append("content", this.contentBlog);
-      formData.append("pinned", this.pinnedBlog ? 1 : 0);
-      // formData.append("reference", this.reference);
-      // formData.append("start_date", this.start_date);
-      // formData.append("end_date", this.end_date);
-      formData.append("status", this.statusBlog);
-      this.images.forEach((image) => {
-        formData.append("myImage", image);
-      });
+        // }
+        formData.append("title", this.titleBlog);
+        formData.append("content", this.contentBlog);
+        formData.append("pinned", this.pinnedBlog ? 1 : 0);
+        // formData.append("reference", this.reference);
+        // formData.append("start_date", this.start_date);
+        // formData.append("end_date", this.end_date);
+        formData.append("status", this.statusBlog);
+        this.images.forEach((image) => {
+          formData.append("myImage", image);
+        });
 
-      // Note ***************
-      // ตอนเรายิง Postmant จะใช้ fromData
-      // ตอนยิงหลาย ๆ รูปพร้อมกันใน Postman จะเป็นแบบนี้
+        // Note ***************
+        // ตอนเรายิง Postmant จะใช้ fromData
+        // ตอนยิงหลาย ๆ รูปพร้อมกันใน Postman จะเป็นแบบนี้
 
-      // title   | "This is a title of blog"
-      // comment | "comment in blog"
-      // ...
-      // myImage | [select file 1]
-      // myImage | [select file 2]
-      // myImage | [select file 3]
+        // title   | "This is a title of blog"
+        // comment | "comment in blog"
+        // ...
+        // myImage | [select file 1]
+        // myImage | [select file 2]
+        // myImage | [select file 3]
 
-      // จะสังเกตุว่าใช้ myImage เป็น key เดียวกัน เลยต้องเอามา loop forEach
-      // พอไปฝั่ง backend มันจะจัด file ให้เป็น Array เพื่อเอาไปใช้งานต่อได้
+        // จะสังเกตุว่าใช้ myImage เป็น key เดียวกัน เลยต้องเอามา loop forEach
+        // พอไปฝั่ง backend มันจะจัด file ให้เป็น Array เพื่อเอาไปใช้งานต่อได้
 
-      axios
-        .post("http://localhost:3000/blogs", formData)
-        .then((res) => this.$router.push({ name: 'home' }))
-        .catch((e) => alert(e.response.data));
+        axios
+          .post("http://localhost:3000/blogs", formData)
+          .then((res) => this.$router.push({ name: 'home' }))
+          .catch((e) => alert(e.response.data));
+      }
     }
+
   },
   validations: {
     titleBlog: {
@@ -314,7 +318,7 @@ export default {
     end_date: {
       checkEnd
     },
-    checkfilesize:{
+    checkfilesize: {
       checkfile,
       checkuploadfile
     }
